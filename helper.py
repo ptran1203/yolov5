@@ -19,13 +19,13 @@ def get_boxes(label):
     return boxes
 
 
-def to_yolo_boxes(bboxes, img_w, img_h):
+def to_yolo_boxes(bboxes, img_h, img_w):
     yolo_boxes = []
     for bbox in bboxes:
         w = bbox[2] - bbox[0] # xmax - xmin
         h = bbox[3] - bbox[1] # ymax - ymin
-        xc = bbox[0] + int(np.round(w/2)) # xmin + width/2
-        yc = bbox[1] + int(np.round(h/2)) # ymin + height/2
+        xc = bbox[0] + w / 2 # xmin + width/2
+        yc = bbox[1] + h / 2# ymin + height/2
         # x_center y_center width height
         yolo_boxes.append([xc / img_w, yc / img_h, w / img_w, h / img_h])
     
