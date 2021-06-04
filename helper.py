@@ -18,22 +18,6 @@ def get_boxes(label):
         
     return boxes
 
-def scale_boxes(boxes, dim0, dim1, img_w, img_h, yolo_format=True):
-    scale_x = img_w / dim0
-    scale_y = img_h / dim1
-    scaled_boxes = []
-    for box in boxes:
-        x1 = int(round(box[0] * scale_x, 4))
-        y1 = int(round(box[1] * scale_y, 4))
-        x2 = int(round(box[2] * scale_x, 4))
-        y2 = int(round(box[3] * scale_y, 4))
-        # xmin, ymin, xmax, ymax
-        scaled_boxes.append([x1, y1, x2, y2])
-
-    if yolo_format:
-        scaled_boxes = to_yolo_boxes(scaled_boxes, img_w, img_h)
-        
-    return scaled_boxes
 
 def to_yolo_boxes(bboxes, img_w, img_h):
     yolo_boxes = []
@@ -43,9 +27,26 @@ def to_yolo_boxes(bboxes, img_w, img_h):
         xc = bbox[0] + int(np.round(w/2)) # xmin + width/2
         yc = bbox[1] + int(np.round(h/2)) # ymin + height/2
         # x_center y_center width height
-        yolo_boxes.append([xc/img_w, yc/img_h, w/img_w, h/img_h])
+        yolo_boxes.append([xc / img_w, yc / img_h, w / img_w, h / img_h])
     
     return yolo_boxes
+
+def scale_boxes(boxes, dim0, dim1, img_w, img_h, yolo_format=True):
+    scale_x = img_w / dim0
+    scale_y = img_h / dim1
+    scaled_boxes = []
+    for box in boxes:
+        x1 = box[0] * scale_x
+        y1 = box[1] * scale_y
+        x2 = box[2] * scale_x
+        y2 = box[3] * scale_y
+        # xmin, ymin, xmax, ymax
+        scaled_boxes.append([x1, y1, x2, y2])
+
+    if yolo_format:
+        scaled_boxes = to_yolo_boxes(scaled_boxes, img_w, img_h)
+        
+    return scaled_boxes
 
 def visualize(image, boxes, scores=None, figsize=(6, 6), linewidth=1):
     '''
@@ -75,7 +76,7 @@ def visualize(image, boxes, scores=None, figsize=(6, 6), linewidth=1):
             clip_on=True,
         )
 
-def random_visualize(train_df, img_dir='/content/dataset/train',
+def random_visualize(train_df, img_dir='/content/dataset/images',
                      img_w=640, img_h=640):
     def v(item):
         return item.values[0]
